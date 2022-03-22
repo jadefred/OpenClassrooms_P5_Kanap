@@ -3,9 +3,13 @@ const items = document.querySelector("#items");
 
 //fetch api
 async function getProducts() {
-  const response = await fetch("http://localhost:3000/api/products");
-  const data = await response.json();
-  displayProducts(data);
+  try {
+    const response = await fetch("http://localhost:3000/api/products");
+    const data = await response.json();
+    displayProducts(data);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 getProducts();
