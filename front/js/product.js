@@ -7,7 +7,6 @@ async function getProduct() {
   try {
     const response = await fetch(`http://localhost:3000/api/products/${id}`);
     const data = await response.json();
-    console.log(data);
     displayProduct(data);
   } catch (e) {
     console.log(e);
@@ -15,6 +14,7 @@ async function getProduct() {
 }
 getProduct();
 
+//Display product's information
 //DOM
 const itemImg = document.querySelector(".item__img");
 const title = document.querySelector("#title");
@@ -42,3 +42,31 @@ function displayProduct(data) {
   price.textContent = data.price;
   description.textContent = data.description;
 }
+
+//Click to save selected value
+const btn = document.querySelector("#addToCart");
+const quantity = document.querySelector("#quantity");
+let productArr = [];
+
+btn.addEventListener("click", () => {
+  //check if the input  correct
+  if (colors.value !== "" && quantity.value > 0 && quantity.value <= 100) {
+    //create object for selected value
+    const selectedProduct = {
+      _id: id,
+      quantity: quantity.value,
+      color: colors.value,
+    };
+
+    //check if local storage is empty, if not, add existing stored items to productArr
+    if (localStorage.getItem("products") !== null) {
+      productArr = JSON.parse(localStorage.getItem("products"));
+    }
+
+    //push newly selected product to productArr, then add to local storage
+    productArr.push(selectedProduct);
+    localStorage.setItem("products", JSON.stringify(productArr));
+  } else {
+    return;
+  }
+});
