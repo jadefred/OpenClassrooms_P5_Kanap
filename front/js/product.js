@@ -16,6 +16,7 @@ getProduct();
 
 //Display product's information
 //DOM
+const headTitle = document.querySelector("title");
 const itemImg = document.querySelector(".item__img");
 const title = document.querySelector("#title");
 const price = document.querySelector("#price");
@@ -36,6 +37,7 @@ function displayProduct(data) {
   }
 
   //assign product
+  headTitle.textContent = data.name;
   img.src = data.imageUrl;
   img.alt = data.altTxt;
   title.textContent = data.name;
@@ -43,30 +45,59 @@ function displayProduct(data) {
   description.textContent = data.description;
 }
 
-//Click to save selected value
+//DOM - for click event and local storage
 const btn = document.querySelector("#addToCart");
 const quantity = document.querySelector("#quantity");
 let productArr = [];
+let selectedProduct = {};
 
+//check if local storage is empty, if not, add existing stored items to productArr
+function checkLocalStorage() {
+  if (localStorage.getItem("products") !== null) {
+    productArr = JSON.parse(localStorage.getItem("products"));
+  }
+}
+
+checkLocalStorage();
+
+//click to add selected product to productArr
 btn.addEventListener("click", () => {
-  //check if the input  correct
+  //check if the input correct
   if (colors.value !== "" && quantity.value > 0 && quantity.value <= 100) {
-    //create object for selected value
-    const selectedProduct = {
+    selectedProduct = {
       _id: id,
       quantity: quantity.value,
       color: colors.value,
     };
-
-    //check if local storage is empty, if not, add existing stored items to productArr
-    if (localStorage.getItem("products") !== null) {
-      productArr = JSON.parse(localStorage.getItem("products"));
-    }
-
-    //push newly selected product to productArr, then add to local storage
-    productArr.push(selectedProduct);
+    removeDuplicatedProducts();
     localStorage.setItem("products", JSON.stringify(productArr));
-  } else {
-    return;
   }
 });
+
+//fucntion to check productArr
+function removeDuplicatedProducts() {
+  //1. if productArr.length = 0, add selected product directly
+  if (productArr.length == 0) {
+    productArr.push(selectedProduct);
+  }
+  //2. if productArr has same id and color product than selected product, change the quantity from productArr only
+  else if (productArr.some(remove)) {
+    for (const i of productArr) {
+      if (i._id == selectedProduct._id && i.color == selectedProduct.color) {
+        let num = parseInt(i.quantity) + parseInt(selectedProduct.quantity);
+        i.quantity = num.toString();
+      }
+    }
+  }
+  //3. if prodoctArr.length > 0 but no duplicated product, add selected product directly
+  else {
+    productArr.push(selectedProduct);
+  }
+}
+
+//call back function for array.some, to check duplicated id and color
+const remove = (i) => {
+  if (i._id == selectedProduct._id && i.color == selectedProduct.color) {
+    return true;
+  }
+};
