@@ -57,7 +57,6 @@ function checkLocalStorage() {
     productArr = JSON.parse(localStorage.getItem("products"));
   }
 }
-
 checkLocalStorage();
 
 //click to add selected product to productArr
