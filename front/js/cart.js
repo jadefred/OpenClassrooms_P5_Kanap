@@ -3,7 +3,6 @@ async function getProducts() {
   try {
     const response = await fetch("http://localhost:3000/api/products");
     const data = await response.json();
-    console.log(data);
     displayProducts(data);
   } catch (e) {
     console.log(e);
@@ -13,10 +12,11 @@ getProducts();
 
 //get products from local storage
 const productArr = JSON.parse(localStorage.getItem("products"));
-console.log(productArr);
 
-//DOM
+//DOM and variables
 const cartSection = document.querySelector("#cart__items");
+let totalPrice = 0;
+let totalQuantity = 0;
 
 //display elements
 function displayProducts(data) {
@@ -49,6 +49,7 @@ function displayProducts(data) {
 
     //quantity
     const quantity = i.quantity;
+    totalQuantity += parseInt(quantity);
 
     //create name, color, price
     const name = document.createElement("p");
@@ -58,6 +59,7 @@ function displayProducts(data) {
     color.textContent = i.color;
     const unformattedPrice =
       data.find((obj) => obj._id == i._id).price * quantity;
+    totalPrice += unformattedPrice;
     price.textContent = new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency: "EUR",
@@ -94,4 +96,10 @@ function displayProducts(data) {
     quantityDeletebtnDiv.appendChild(quantityInputDiv);
     quantityDeletebtnDiv.appendChild(deletebtnDiv);
   }
+
+  //DOM total quantity and total price
+  const totalQuantityElement = document.querySelector("#totalQuantity");
+  totalQuantityElement.textContent = totalQuantity;
+  const totalPriceElement = document.querySelector("#totalPrice");
+  totalPriceElement.textContent = totalPrice + ",00";
 }
