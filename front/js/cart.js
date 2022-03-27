@@ -161,7 +161,6 @@ const wrongEmailMsg = document.querySelector("#emailErrorMsg");
 
 //submit button event listener
 submitbtn.addEventListener("click", (e) => {
-  e.preventDefault();
   //check if the user entered all information
   if (
     !firstName.value ||
@@ -222,14 +221,30 @@ submitbtn.addEventListener("click", (e) => {
       body: JSON.stringify(order),
     };
 
-    const sendToServer = async () => {
+    //get confirmation id from server
+    placeOrder();
+    async function placeOrder() {
       try {
         const response = await fetch(
           "http://localhost:3000/api/products/order",
           options
         );
         const data = await response.json();
-      } catch (e) {}
-    };
+
+        //clear LS, to clear selected products
+        localStorage.clear();
+
+        //save server given order id, create empty array and set item in LS
+        const orderedProductsId = {
+          _id: data.orderId,
+        };
+        let orderProductsArr = [];
+        orderProductsArr.push(orderedProductsId);
+        localStorage.setItem("confirmation", JSON.stringify(orderProductsArr));
+        document.location.href = "confirmation.html";
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }
 });
