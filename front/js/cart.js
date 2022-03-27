@@ -20,6 +20,7 @@ let totalQuantity = 0;
 
 //display elements
 function displayProducts(data) {
+  //for loop through LS array
   for (const i of productArr) {
     //create article
     const article = document.createElement("article");
@@ -57,7 +58,7 @@ function displayProducts(data) {
     const price = document.createElement("p");
     name.textContent = data.find((obj) => obj._id == i._id).name;
     color.textContent = i.color;
-    const unformattedPrice =
+    let unformattedPrice =
       data.find((obj) => obj._id == i._id).price * quantity;
     totalPrice += unformattedPrice;
     price.textContent = new Intl.NumberFormat("fr-FR", {
@@ -80,6 +81,30 @@ function displayProducts(data) {
     quantityInput.value = quantity;
     quantityInputDiv.appendChild(quantityText);
     quantityInputDiv.appendChild(quantityInput);
+
+    //add event listener to input, change total quantity, total price and individual price
+    quantityInput.addEventListener("change", () => {
+      //modify quantity according input value
+      let quantityDifference = quantityInput.value - i.quantity;
+      totalQuantity += quantityDifference;
+      i.quantity = quantityInput.value;
+      //change LS each quantity and total quantity display
+      localStorage.setItem("products", JSON.stringify(productArr));
+      totalQuantityElement.textContent = totalQuantity;
+
+      //modify price
+      //create new price, compare with old price, change old price to new, and modify total price
+      const newPrice =
+        data.find((obj) => obj._id == i._id).price * quantityInput.value;
+      let priceDifference = newPrice - unformattedPrice;
+      totalPrice += priceDifference;
+      unformattedPrice = newPrice;
+      price.textContent = new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+      }).format(newPrice);
+      totalPriceElement.textContent = totalPrice + ",00";
+    });
 
     //delete button
     const deleteBtn = document.createElement("p");
