@@ -112,6 +112,19 @@ function displayProducts(data) {
     deleteBtn.textContent = "Supprimer";
     deletebtnDiv.appendChild(deleteBtn);
 
+    //add event listener to delete button
+    //click to delete item from dom, LS and display new total quantity and total price
+    deleteBtn.addEventListener("click", () => {
+      let index = productArr.indexOf(i);
+      productArr.splice(index, 1);
+      localStorage.setItem("products", JSON.stringify(productArr));
+      cartSection.removeChild(article);
+      totalQuantity -= i.quantity;
+      totalQuantityElement.textContent = totalQuantity;
+      totalPrice -= unformattedPrice;
+      totalPriceElement.textContent = totalPrice + ",00";
+    });
+
     //append child - divs
     cartSection.appendChild(article);
     article.appendChild(imgDiv);
