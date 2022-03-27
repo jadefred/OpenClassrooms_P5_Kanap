@@ -13,7 +13,7 @@ getProducts();
 //get products from local storage
 const productArr = JSON.parse(localStorage.getItem("products"));
 
-//DOM and variables
+//DOM and variables - display items from LS
 const cartSection = document.querySelector("#cart__items");
 let totalPrice = 0;
 let totalQuantity = 0;
@@ -141,3 +141,95 @@ function displayProducts(data) {
   const totalPriceElement = document.querySelector("#totalPrice");
   totalPriceElement.textContent = totalPrice + ",00";
 }
+
+//for clients' information, check info and alert of info formet is not correct
+//DOM - form elements and submit button
+const firstName = document.querySelector("#firstName");
+const lastName = document.querySelector("#lastName");
+const address = document.querySelector("#address");
+const city = document.querySelector("#city");
+const email = document.querySelector("#email");
+const submitbtn = document.querySelector("#order");
+const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+//DOM - error message
+const wrongFirstNameMsg = document.querySelector("#firstNameErrorMsg");
+const wrongLastNameMsg = document.querySelector("#lastNameErrorMsg");
+const wrongAddressMsg = document.querySelector("#addressErrorMsg");
+const wrongCityMsg = document.querySelector("#cityErrorMsg");
+const wrongEmailMsg = document.querySelector("#emailErrorMsg");
+
+//submit button event listener
+submitbtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  //check if the user entered all information
+  if (
+    !firstName.value ||
+    !lastName.value ||
+    !address.value ||
+    !city.value ||
+    !email.value
+  ) {
+    //if info is not completed,show warning accordingly
+    if (!firstName.value) {
+      wrongFirstNameMsg.textContent = "Veuillez entrer votre prénom";
+    }
+    if (!lastName.value) {
+      wrongLastNameMsg.textContent = "Veuillez entrer votre nom";
+    }
+    if (!address.value) {
+      wrongAddressMsg.textContent = "Veuillez entrer votre adresse";
+    }
+    if (!city.value) {
+      wrongCityMsg.textContent = "Veuillez entrer votre ville";
+    }
+    if (!email.value) {
+      wrongEmailMsg.textContent = "Veuillez entrer votre email";
+    }
+  }
+  //or if the email formet is not correct, show another warning
+  else if (emailPattern.test(email.value) == false) {
+    wrongEmailMsg.textContent =
+      "L'adresse email est incorrect. Veuillez la modifier";
+  }
+  //all info is completed and correct
+  else {
+    //push productArrs' id to a empty array for POST after
+    let products = [];
+    for (const i of productArr) {
+      products.push(i._id);
+    }
+
+    //object which contain contact of client and his products' id
+    const order = {
+      contact: {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value,
+      },
+      products,
+    };
+
+    console.log(products);
+    console.log(order);
+
+    //Prepare post object
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order),
+    };
+
+    const sendToServer = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/products/order",
+          options
+        );
+        const data = await response.json();
+      } catch (e) {}
+    };
+  }
+});
