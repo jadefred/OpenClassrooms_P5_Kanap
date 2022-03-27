@@ -84,6 +84,9 @@ function displayProducts(data) {
 
     //add event listener to input, change total quantity, total price and individual price
     quantityInput.addEventListener("change", () => {
+      if (quantityInput.value <= 0 || quantityInput.value > 100) {
+        return;
+      }
       //modify quantity according input value
       let quantityDifference = quantityInput.value - i.quantity;
       totalQuantity += quantityDifference;
@@ -163,6 +166,7 @@ const wrongEmailMsg = document.querySelector("#emailErrorMsg");
 submitbtn.addEventListener("click", (e) => {
   //check if the user entered all information
   if (
+    productArr.lenght == 0 ||
     !firstName.value ||
     !lastName.value ||
     !address.value ||
