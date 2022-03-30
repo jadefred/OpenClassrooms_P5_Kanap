@@ -80,7 +80,9 @@ function removeDuplicatedProducts() {
     productArr.push(selectedProduct);
   }
   //2. if productArr has same id and color product than selected product, change the quantity from productArr only
-  else if (productArr.some(remove)) {
+  else if (
+    productArr.some((i) => (i._id == selectedProduct._id && i.color == selectedProduct.color))
+  ) {
     for (const i of productArr) {
       if (i._id == selectedProduct._id && i.color == selectedProduct.color) {
         let num = parseInt(i.quantity) + parseInt(selectedProduct.quantity);
@@ -93,10 +95,3 @@ function removeDuplicatedProducts() {
     productArr.push(selectedProduct);
   }
 }
-
-//call back function for array.some, to check duplicated id and color
-const remove = (i) => {
-  if (i._id == selectedProduct._id && i.color == selectedProduct.color) {
-    return true;
-  }
-};
