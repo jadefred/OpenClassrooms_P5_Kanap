@@ -28,25 +28,51 @@ function displayProducts(data) {
     article.setAttribute("data-id", i._id);
     article.setAttribute("data-color", i.color);
 
+    //-----------------------old version of creating div below-----------------------------
     //create divs
-    const imgDiv = document.createElement("div");
-    imgDiv.className = "cart__item__img";
-    const allDetailsDiv = document.createElement("div");
-    allDetailsDiv.className = "cart__item__content";
-    const nameColorPriceDiv = document.createElement("div");
-    nameColorPriceDiv.className = "cart__item__content__description";
-    const quantityDeletebtnDiv = document.createElement("div");
-    quantityDeletebtnDiv.className = "cart__item__content__settings";
-    const quantityInputDiv = document.createElement("div");
-    quantityInputDiv.className = "cart__item__content__settings__quantity";
-    const deletebtnDiv = document.createElement("div");
-    deletebtnDiv.className = "cart__item__content__settings__delete";
+    // const imgDiv = document.createElement("div");
+    // imgDiv.className = "cart__item__img";
+    // const allDetailsDiv = document.createElement("div");
+    // allDetailsDiv.className = "cart__item__content";
+    // const nameColorPriceDiv = document.createElement("div");
+    // nameColorPriceDiv.className = "cart__item__content__description";
+    // const quantityDeletebtnDiv = document.createElement("div");
+    // quantityDeletebtnDiv.className = "cart__item__content__settings";
+    // const quantityInputDiv = document.createElement("div");
+    // quantityInputDiv.className = "cart__item__content__settings__quantity";
+    // const deletebtnDiv = document.createElement("div");
+    // deletebtnDiv.className = "cart__item__content__settings__delete";
+    //-----------------------old version of creating div above-----------------------------
+
+    //create all sub divs and assign class name
+    let allVariablesNames = [
+      "imgDiv",
+      "allDetailsDiv",
+      "nameColorPriceDiv",
+      "quantityDeletebtnDiv",
+      "quantityInputDiv",
+      "deletebtnDiv",
+    ];
+
+    let allDivClassName = [
+      "cart__item__img",
+      "cart__item__content",
+      "cart__item__content__description",
+      "cart__item__content__settings",
+      "cart__item__content__settings__quantity",
+      "cart__item__content__settings__delete",
+    ];
+
+    for (let i = 0; i < allVariablesNames.length; i++) {
+      window[allVariablesNames[i]] = document.createElement("div");
+      window[allVariablesNames[i]].className = allDivClassName[i];
+    }
 
     //create image
     const img = document.createElement("img");
     img.src = data.find((obj) => obj._id == i._id).imageUrl;
     img.alt = data.find((obj) => obj._id == i._id).altTxt;
-    imgDiv.appendChild(img);
+    imgDiv.append(img);
 
     //quantity
     const quantity = i.quantity;
