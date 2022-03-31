@@ -96,29 +96,7 @@ function displayProducts(data) {
 
     //add event listener to input, change total quantity, total price and individual price
     quantityInput.addEventListener("change", () => {
-      if (quantityInput.value <= 0 || quantityInput.value > 100) {
-        return;
-      }
-      //modify quantity according input value
-      let quantityDifference = quantityInput.value - i.quantity;
-      totalQuantity += quantityDifference;
-      i.quantity = quantityInput.value;
-      //change LS each quantity and total quantity display
-      localStorage.setItem("products", JSON.stringify(productArr));
-      totalQuantityElement.textContent = totalQuantity;
-
-      //modify price
-      //create new price, compare with old price, change old price to new, and modify total price
-      const newPrice =
-        data.find((obj) => obj._id == i._id).price * quantityInput.value;
-      let priceDifference = newPrice - unformattedPrice;
-      totalPrice += priceDifference;
-      unformattedPrice = newPrice;
-      price.textContent = new Intl.NumberFormat("fr-FR", {
-        style: "currency",
-        currency: "EUR",
-      }).format(newPrice);
-      totalPriceElement.textContent = totalPrice + ",00";
+      modifyPriceQuantityWhenInputChange(quantityInput, i, data, price);
     });
 
     //delete button
@@ -129,7 +107,7 @@ function displayProducts(data) {
 
     //add event listener to delete button
     deleteBtn.addEventListener("click", () => {
-      clickToDeleteProduct(i, article, unformattedPrice);
+      clickToDeleteProduct(i, article, data);
     });
 
     //append child - divs
@@ -147,21 +125,54 @@ function displayProducts(data) {
   totalPriceElement.textContent = totalPrice + ",00";
 }
 
+//-----------------------------------------------------------------------------------
+//------------------ Call back functions for event listeners ------------------------
+//-----------------------------------------------------------------------------------
 //call back function for delete product event listener
 //click to delete item from dom, LS and display new total quantity and total price
-function clickToDeleteProduct(i, article, unformattedPrice) {
+function clickToDeleteProduct(i, article, data) {
   let index = productArr.indexOf(i);
   productArr.splice(index, 1);
   localStorage.setItem("products", JSON.stringify(productArr));
   cartSection.removeChild(article);
   totalQuantity -= i.quantity;
   totalQuantityElement.textContent = totalQuantity;
-  totalPrice -= unformattedPrice;
+  const oldPrice = data.find((obj) => obj._id == i._id).price * i.quantity;
+  console.log(oldPrice);
+  totalPrice -= oldPrice;
   totalPriceElement.textContent = totalPrice + ",00";
 }
 
-//-----------------------------------------------------------------------------------------------
-//for clients' information, check info and alert of info formet is not correct
+function modifyPriceQuantityWhenInputChange(quantityInput, i, data, price) {
+  if (quantityInput.value <= 0 || quantityInput.value > 100) {
+    return;
+  }
+  //modify price
+  //create new price, compare with old price, change old price to new, and modify total price
+  const newPrice =
+    data.find((obj) => obj._id == i._id).price * quantityInput.value;
+  const oldPrice = data.find((obj) => obj._id == i._id).price * i.quantity;
+  const priceDifference = newPrice - oldPrice;
+  totalPrice += priceDifference;
+  price.textContent = new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+  }).format(newPrice);
+  totalPriceElement.textContent = totalPrice + ",00";
+
+  //modify quantity according input value
+  let quantityDifference = quantityInput.value - i.quantity;
+  totalQuantity += quantityDifference;
+  i.quantity = quantityInput.value;
+  //change LS each quantity and total quantity display
+  localStorage.setItem("products", JSON.stringify(productArr));
+  totalQuantityElement.textContent = totalQuantity;
+}
+
+//-----------------------------------------------------------------------------------
+//------------------ Get clients' information and POST to server---------------------
+//-----------------------------------------------------------------------------------
+//check info and alert of info formet correct or not
 //DOM - form elements and submit button
 const firstName = document.querySelector("#firstName");
 const lastName = document.querySelector("#lastName");
