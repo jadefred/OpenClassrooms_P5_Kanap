@@ -15,6 +15,8 @@ const productArr = JSON.parse(localStorage.getItem("products"));
 
 //DOM and variables - display items from LS
 const cartSection = document.querySelector("#cart__items");
+const totalQuantityElement = document.querySelector("#totalQuantity");
+const totalPriceElement = document.querySelector("#totalPrice");
 let totalPrice = 0;
 let totalQuantity = 0;
 
@@ -27,22 +29,6 @@ function displayProducts(data) {
     article.className = "cart__item";
     article.setAttribute("data-id", i._id);
     article.setAttribute("data-color", i.color);
-
-    //-----------------------old version of creating div below-----------------------------
-    //create divs
-    // const imgDiv = document.createElement("div");
-    // imgDiv.className = "cart__item__img";
-    // const allDetailsDiv = document.createElement("div");
-    // allDetailsDiv.className = "cart__item__content";
-    // const nameColorPriceDiv = document.createElement("div");
-    // nameColorPriceDiv.className = "cart__item__content__description";
-    // const quantityDeletebtnDiv = document.createElement("div");
-    // quantityDeletebtnDiv.className = "cart__item__content__settings";
-    // const quantityInputDiv = document.createElement("div");
-    // quantityInputDiv.className = "cart__item__content__settings__quantity";
-    // const deletebtnDiv = document.createElement("div");
-    // deletebtnDiv.className = "cart__item__content__settings__delete";
-    //-----------------------old version of creating div above-----------------------------
 
     //create all sub divs and assign class name
     let allVariablesNames = [
@@ -142,16 +128,8 @@ function displayProducts(data) {
     deletebtnDiv.appendChild(deleteBtn);
 
     //add event listener to delete button
-    //click to delete item from dom, LS and display new total quantity and total price
     deleteBtn.addEventListener("click", () => {
-      let index = productArr.indexOf(i);
-      productArr.splice(index, 1);
-      localStorage.setItem("products", JSON.stringify(productArr));
-      cartSection.removeChild(article);
-      totalQuantity -= i.quantity;
-      totalQuantityElement.textContent = totalQuantity;
-      totalPrice -= unformattedPrice;
-      totalPriceElement.textContent = totalPrice + ",00";
+      clickToDeleteProduct(i, article, unformattedPrice);
     });
 
     //append child - divs
@@ -164,13 +142,25 @@ function displayProducts(data) {
     quantityDeletebtnDiv.appendChild(deletebtnDiv);
   }
 
-  //DOM total quantity and total price
-  const totalQuantityElement = document.querySelector("#totalQuantity");
+  //modify total quantity and total price
   totalQuantityElement.textContent = totalQuantity;
-  const totalPriceElement = document.querySelector("#totalPrice");
   totalPriceElement.textContent = totalPrice + ",00";
 }
 
+//call back function for delete product event listener
+//click to delete item from dom, LS and display new total quantity and total price
+function clickToDeleteProduct(i, article, unformattedPrice) {
+  let index = productArr.indexOf(i);
+  productArr.splice(index, 1);
+  localStorage.setItem("products", JSON.stringify(productArr));
+  cartSection.removeChild(article);
+  totalQuantity -= i.quantity;
+  totalQuantityElement.textContent = totalQuantity;
+  totalPrice -= unformattedPrice;
+  totalPriceElement.textContent = totalPrice + ",00";
+}
+
+//-----------------------------------------------------------------------------------------------
 //for clients' information, check info and alert of info formet is not correct
 //DOM - form elements and submit button
 const firstName = document.querySelector("#firstName");
