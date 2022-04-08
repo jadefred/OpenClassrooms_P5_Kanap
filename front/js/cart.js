@@ -31,7 +31,7 @@ function displayProducts(data) {
     article.setAttribute("data-color", i.color);
 
     //create all sub divs and assign class name
-    let allVariablesNames = [
+    const allVariablesNames = [
       "imgDiv",
       "allDetailsDiv",
       "nameColorPriceDiv",
@@ -40,7 +40,7 @@ function displayProducts(data) {
       "deletebtnDiv",
     ];
 
-    let allDivClassName = [
+    const allDivClassName = [
       "cart__item__img",
       "cart__item__content",
       "cart__item__content__description",
@@ -96,7 +96,7 @@ function displayProducts(data) {
 
     //add event listener to input, change total quantity, total price and individual price
     quantityInput.addEventListener("change", () => {
-      modifyPriceQuantityWhenInputChange(quantityInput, i, data, price);
+      modifyPriceQuantity(quantityInput, i, data, price);
     });
 
     //delete button
@@ -138,12 +138,11 @@ function clickToDeleteProduct(i, article, data) {
   totalQuantity -= i.quantity;
   totalQuantityElement.textContent = totalQuantity;
   const oldPrice = data.find((obj) => obj._id == i._id).price * i.quantity;
-  console.log(oldPrice);
   totalPrice -= oldPrice;
   totalPriceElement.textContent = totalPrice + ",00";
 }
 
-function modifyPriceQuantityWhenInputChange(quantityInput, i, data, price) {
+function modifyPriceQuantity(quantityInput, i, data, price) {
   if (quantityInput.value <= 0 || quantityInput.value > 100) {
     return;
   }
@@ -191,6 +190,7 @@ const wrongEmailMsg = document.querySelector("#emailErrorMsg");
 
 //submit button event listener
 submitbtn.addEventListener("click", (e) => {
+  e.preventDefault();
   //check if the user entered all information
   if (
     productArr.lenght == 0 ||
@@ -239,11 +239,8 @@ submitbtn.addEventListener("click", (e) => {
         city: city.value,
         email: email.value,
       },
-      products,
+      products: products,
     };
-
-    console.log(products);
-    console.log(order);
 
     //Prepare post object
     const options = {
@@ -253,29 +250,31 @@ submitbtn.addEventListener("click", (e) => {
     };
 
     //get confirmation id from server
-    placeOrder();
-    async function placeOrder() {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/api/products/order",
-          options
-        );
-        const data = await response.json();
-
-        //clear LS, to clear selected products
-        localStorage.clear();
-
-        //save server given order id, create empty array and set item in LS
-        const orderedProductsId = {
-          _id: data.orderId,
-        };
-        let orderProductsArr = [];
-        orderProductsArr.push(orderedProductsId);
-        localStorage.setItem("confirmation", JSON.stringify(orderProductsArr));
-        document.location.href = "confirmation.html";
-      } catch (e) {
-        console.log(e);
-      }
-    }
+    placeOrder(options);
   }
 });
+
+async function placeOrder(options) {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/api/products/order",
+      options
+    );
+    const data = await response.json();
+
+    //clear LS, to clear selected products
+    localStorage.clear();
+
+    //save server given order id, create empty array and set item in LS
+    const orderedProductsId = {
+      _id: data.orderId,
+    };
+
+    let orderProductsArr = [];
+    orderProductsArr.push(orderedProductsId);
+    localStorage.setItem("confirmation", JSON.stringify(orderProductsArr));
+    document.location.href = "confirmation.html";
+  } catch (e) {
+    console.log(e);
+  }
+}
