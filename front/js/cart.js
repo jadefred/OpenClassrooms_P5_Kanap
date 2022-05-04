@@ -198,29 +198,29 @@ submitbtn.addEventListener("click", (e) => {
     !lastName.value ||
     !address.value ||
     !city.value ||
-    !email.value
+    !email.value ||
+    emailPattern.test(email.value) == false
   ) {
-    //if info is not completed,show warning accordingly
+    //if info is not completed or email is not in correct formet,show warning accordingly
+    //remove the warning message if client entered the correct informations
     if (!firstName.value) {
       wrongFirstNameMsg.textContent = "Veuillez entrer votre prénom";
-    }
+    } else wrongFirstNameMsg.textContent = "";
     if (!lastName.value) {
       wrongLastNameMsg.textContent = "Veuillez entrer votre nom";
-    }
+    } else wrongLastNameMsg.textContent = "";
     if (!address.value) {
       wrongAddressMsg.textContent = "Veuillez entrer votre adresse";
-    }
+    } else wrongAddressMsg.textContent = "";
     if (!city.value) {
       wrongCityMsg.textContent = "Veuillez entrer votre ville";
-    }
+    } else wrongCityMsg.textContent = "";
     if (!email.value) {
       wrongEmailMsg.textContent = "Veuillez entrer votre email";
-    }
-  }
-  //or if the email formet is not correct, show another warning
-  else if (emailPattern.test(email.value) == false) {
-    wrongEmailMsg.textContent =
-      "L'adresse email est incorrect. Veuillez la modifier";
+    } else if (emailPattern.test(email.value) == false) {
+      wrongEmailMsg.textContent =
+        "L'adresse email est incorrect. Veuillez la modifier";
+    } else wrongEmailMsg.textContent = "";
   }
   //all info is completed and correct
   else {
