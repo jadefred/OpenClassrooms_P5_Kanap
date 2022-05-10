@@ -1,11 +1,9 @@
 //DOM
 const orderId = document.querySelector("#orderId");
 
-//get id from LS
-const idFromLs = JSON.parse(localStorage.getItem("confirmation"));
+//search order id saved in url
+let url = new URL(document.location).searchParams;
+let urlOrderId = url.get("orderid");
 
-displayOrderId();
-function displayOrderId() {
-  orderId.textContent = idFromLs[0]._id;
-  localStorage.clear();
-}
+//assign order id from url to dom
+orderId.textContent = urlOrderId;

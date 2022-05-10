@@ -265,15 +265,8 @@ async function placeOrder(options) {
     //clear LS, to clear selected products
     localStorage.clear();
 
-    //save server given order id, create empty array and set item in LS
-    const orderedProductsId = {
-      _id: data.orderId,
-    };
-
-    let orderProductsArr = [];
-    orderProductsArr.push(orderedProductsId);
-    localStorage.setItem("confirmation", JSON.stringify(orderProductsArr));
-    document.location.href = "confirmation.html";
+    //redirect to confirmation page with query of order id
+    document.location.href = "confirmation.html?orderid=" + data.orderId;
   } catch (e) {
     console.log(e);
   }
